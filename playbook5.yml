@@ -1,0 +1,34 @@
+---
+- name: configuring tomcat8
+  hosts: all
+  tasks:
+   - name: Install tomcat8
+     apt:
+      name: tomcat8
+      state: present
+      update_cache: yes
+   - name: copy tomcat-users.xml file
+     copy:
+      src: tomcat-users.xml      
+      dest: /etc/tomcat8
+   - name: change the port of tomcat from 8080 to 9090
+     replace:
+      regexp: 8080         
+      replace: 9090
+      path: /etc/tomcat8/server.xml
+   - name: Restart tomcat8
+     service:
+      name: tomcat8
+      state: restarted
+   - name: pause the playbook for some time
+     pause: 
+      minutes: 5  
+   - name: check the url response of tomcat on server1
+     uri:
+      url: http://172.31.5.97:9090
+      status_code: 200
+   - name: check the url response of tomcat on server2
+     uri:
+      url: http://172.31.12.236:9090
+      status_code: 200
+      
